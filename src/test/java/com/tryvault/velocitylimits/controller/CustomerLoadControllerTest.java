@@ -37,9 +37,7 @@ public class CustomerLoadControllerTest {
         request.setCustomerId("1");
         request.setLoadAmount("$1000");
         request.setTime("2023-05-09T12:00:00Z");
-
         var response = restTemplate.postForEntity(getUrl(), request, LoadResponse.class);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("1", response.getBody().getId());
@@ -54,9 +52,7 @@ public class CustomerLoadControllerTest {
         request.setCustomerId("");
         request.setLoadAmount("invalid_amount");
         request.setTime("invalid_time");
-
         var response = restTemplate.postForEntity(getUrl(), request, ErrorResponse.class);
-
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().getStatus());

@@ -25,7 +25,6 @@ public class CustomerLoadServiceTest {
 
     @Test
     public void testProcessLoadRequest_acceptsValidLoad() {
-
         String time = "2023-05-09T12:00:00Z";
         String id = "1";
         LoadRequest request = new LoadRequest();
@@ -33,13 +32,11 @@ public class CustomerLoadServiceTest {
         request.setCustomerId(id);
         request.setLoadAmount("$1000");
         request.setTime(time);
-
         CustomerLoad customerLoad = new CustomerLoad();
         customerLoad.setAccepted(true);
         customerLoad.setCustomerId(id);
         customerLoad.setId(id);
         doReturn(customerLoad).when(repository).save(any());
-
         var result = service.processLoadRequest(request);
         assertNotNull(result);
         assertEquals(id, result.getId());
@@ -54,7 +51,6 @@ public class CustomerLoadServiceTest {
         request.setCustomerId("");
         request.setLoadAmount("invalid_amount");
         request.setTime("invalid_time");
-
         assertThrows(InvalidInputException.class, () -> service.processLoadRequest(request));
     }
 

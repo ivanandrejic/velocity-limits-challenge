@@ -5,6 +5,7 @@ import com.tryvault.velocitylimits.dto.LoadRequest;
 import com.tryvault.velocitylimits.dto.LoadResponse;
 import com.tryvault.velocitylimits.exception.InvalidInputException;
 import com.tryvault.velocitylimits.repository.CustomerLoadRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -15,7 +16,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class CustomerLoadService {
 
@@ -23,9 +26,20 @@ public class CustomerLoadService {
     private CustomerLoadRepository repository;
 
     public LoadResponse processLoadRequest(LoadRequest request) {
+        log.debug("Processing load request: {}", request);
 
         if (!StringUtils.hasLength(request.getId())) {
+            log.warn("Invalid input: Missing ID");
             throw new InvalidInputException("Invalid input: Missing ID");
+        }
+        if (!StringUtils.hasLength(request.getCustomerId())) {
+            log.warn("Invalid input: Missing customer ID");
+            throw new InvalidInputException("Invalid input: Missing customer ID");
+        }
+        Optional<CustomerLoad> byId = repository.findById(request.getId());
+        if (byId.isPresent() && byId.get().getCustomerId().equals(request.getCustomerId())) {
+            log.info("User ID already loaded, return empty response.");
+            return null;
         }
         var dateTime = LocalDateTime.parse(request.getTime(), DateTimeFormatter.ISO_DATE_TIME);
         var date = dateTime.toLocalDate();
@@ -67,6 +81,7 @@ public class CustomerLoadService {
         response.setAccepted(save.isAccepted());
         response.setCustomerId(save.getCustomerId());
         response.setId(save.getId());
+        log.debug("Return response: {}", response);
         return response;
     }
 }
