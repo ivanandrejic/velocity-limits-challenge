@@ -22,6 +22,10 @@ import java.util.Optional;
 @Service
 public class CustomerLoadService {
 
+    public static final int DAILY_TOTAL_LIMIT = 5000;
+    public static final int WEEKLY_TOTAL_LIMIT = 20000;
+    public static final int DAILY_LOADS_LIMIT = 3;
+    public static final String CURRENT_SYMBOL = "$";
     @Autowired
     private CustomerLoadRepository repository;
 
@@ -63,11 +67,11 @@ public class CustomerLoadService {
                 .map(CustomerLoad::getLoadAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        var loadAmount = new BigDecimal(request.getLoadAmount().replace("$", ""));
+        var loadAmount = new BigDecimal(request.getLoadAmount().replace(CURRENT_SYMBOL, ""));
 
-        var accepted = dailyLoads.size() < 3 &&
-                dailyTotal.add(loadAmount).compareTo(new BigDecimal(5000)) <= 0 &&
-                weeklyTotal.add(loadAmount).compareTo(new BigDecimal(20000)) <= 0;
+        var accepted = dailyLoads.size() < DAILY_LOADS_LIMIT &&
+                dailyTotal.add(loadAmount).compareTo(new BigDecimal(DAILY_TOTAL_LIMIT)) <= 0 &&
+                weeklyTotal.add(loadAmount).compareTo(new BigDecimal(WEEKLY_TOTAL_LIMIT)) <= 0;
 
         var customerLoad = new CustomerLoad();
         customerLoad.setId(request.getId());
