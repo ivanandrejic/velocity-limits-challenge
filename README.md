@@ -17,7 +17,7 @@ This Java Spring Boot application enforces velocity limits on customer accounts,
 
 ## Setup
 
-1. Clone the repository
+1. Clone the repository: `https://github.com/ivanandrejic/velocity-limits-challenge`
 2. Navigate to the project directory
 3. Build the project using Maven:
 
